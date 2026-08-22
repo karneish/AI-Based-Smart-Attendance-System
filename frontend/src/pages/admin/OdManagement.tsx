@@ -161,6 +161,7 @@ export default function OdManagement() {
 
   useEffect(() => {
     loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Load students for modal whenever departmentId, yearLabel, or sectionId change
@@ -181,7 +182,7 @@ export default function OdManagement() {
       }
     }
     fetchStudents()
-  }, [showCreateModal, departmentId, yearLabel, sectionId])
+  }, [showCreateModal, departmentId, yearLabel, sectionId, toast])
 
   // Preview periods whenever sectionId, date, fromTime, or toTime change
   useEffect(() => {
