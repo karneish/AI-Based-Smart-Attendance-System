@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecord, Long> {
 
@@ -13,7 +14,14 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
 
     Optional<AttendanceRecord> findBySessionIdAndStudentId(Long sessionId, Long studentId);
 
-    List<AttendanceRecord> findByStudentIdOrderByMarkedAtDesc(Long studentId);
+    @Query("select r from AttendanceRecord r "
+            + "join fetch r.session s "
+            + "left join fetch s.timetableEntry "
+            + "join fetch s.subject "
+            + "join fetch s.section "
+            + "where r.student.id = :studentId "
+            + "order by r.markedAt desc")
+    List<AttendanceRecord> findStudentHistory(@Param("studentId") Long studentId);
 
     List<AttendanceRecord> findBySession_IdIn(List<Long> sessionIds);
 

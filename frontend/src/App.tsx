@@ -1,8 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider, homeForRole, useAuth } from './auth/AuthContext'
+import { AuthProvider } from './auth/AuthContext'
 import { RequireAuth } from './auth/RequireAuth'
 import { Layout } from './components/Layout'
 import { ToastProvider } from './components/Toasts'
+import Landing from './pages/Landing'
 import Login from './pages/Login'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -27,26 +28,13 @@ import MyAttendance from './pages/student/MyAttendance'
 import Planner from './pages/student/Planner'
 import StudentSubjects from './pages/student/Subjects'
 
-function Home() {
-  const { user, loading } = useAuth()
-  if (loading) {
-    return (
-      <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
-        <div className="spinner" />
-      </div>
-    )
-  }
-  if (!user) return <Navigate to="/login" replace />
-  return <Navigate to={homeForRole(user.role)} replace />
-}
-
 function App() {
   return (
     <BrowserRouter>
       <ToastProvider>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
 
             <Route path="/admin" element={<RequireAuth roles={['ADMIN']}><Layout /></RequireAuth>}>

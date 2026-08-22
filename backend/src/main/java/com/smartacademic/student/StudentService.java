@@ -199,10 +199,10 @@ public class StudentService {
     public List<AttendanceRecordViewDto> attendance(String username) {
         Student student = currentStudent(username);
         List<AttendanceRecordViewDto> views = new ArrayList<>();
-        for (AttendanceRecord r : recordRepository.findByStudentIdOrderByMarkedAtDesc(student.getId())) {
+        for (AttendanceRecord r : recordRepository.findStudentHistory(student.getId())) {
             AttendanceSession s = r.getSession();
             views.add(new AttendanceRecordViewDto(r.getId(), s.getSessionDate(), s.getSessionDate().getDayOfWeek().name(),
-                    s.getTimetableEntry().getPeriod(),
+                    s.getTimetableEntry() != null ? s.getTimetableEntry().getPeriod() : 0,
                     s.getSubject().getCode() + " - " + s.getSubject().getName(), s.getSection().getDisplayName(),
                     r.getStatus()));
         }

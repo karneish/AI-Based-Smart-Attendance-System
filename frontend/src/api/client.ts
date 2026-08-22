@@ -4,19 +4,32 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? ''
 const TOKEN_KEY = 'sac_token'
 
 export function getToken(): string | null {
-  return sessionStorage.getItem(TOKEN_KEY)
+  try {
+    return sessionStorage.getItem(TOKEN_KEY) ?? localStorage.getItem(TOKEN_KEY)
+  } catch {
+    return null
+  }
 }
 
-export function setToken(token: string | null): void {
-  if (token) {
-    sessionStorage.setItem(TOKEN_KEY, token)
-  } else {
-    sessionStorage.removeItem(TOKEN_KEY)
+export function setToken(token: string | null, remember = false): void {
+  clearToken()
+  try {
+    if (token) {
+      const store = remember ? localStorage : sessionStorage
+      store.setItem(TOKEN_KEY, token)
+    }
+  } catch {
+    /* storage unavailable (private mode) */
   }
 }
 
 export function clearToken(): void {
-  sessionStorage.removeItem(TOKEN_KEY)
+  try {
+    sessionStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(TOKEN_KEY)
+  } catch {
+    /* ignore */
+  }
 }
 
 export class ApiError extends Error {

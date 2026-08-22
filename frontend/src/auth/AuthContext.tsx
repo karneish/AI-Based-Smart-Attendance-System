@@ -6,7 +6,7 @@ import type { AuthResponse, Role, UserInfo } from '../api/types'
 interface AuthContextValue {
   user: UserInfo | null
   loading: boolean
-  login: (username: string, password: string) => Promise<UserInfo>
+  login: (username: string, password: string, remember?: boolean) => Promise<UserInfo>
   logout: () => void
 }
 
@@ -33,9 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('auth:unauthorized', onUnauthorized)
   }, [])
 
-  const login = useCallback(async (username: string, password: string) => {
+  const login = useCallback(async (username: string, password: string, remember = false) => {
     const res = await post<AuthResponse>('/api/auth/login', { username, password })
-    setToken(res.token)
+    setToken(res.token, remember)
     setUser(res.user)
     return res.user
   }, [])

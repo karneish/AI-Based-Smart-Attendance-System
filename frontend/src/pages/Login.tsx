@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/client'
 import { homeForRole, useAuth } from '../auth/AuthContext'
 import { Badge, Button, Modal } from '../components/ui'
 import { useToast } from '../components/Toasts'
 import {
+  IconAlertTriangle,
   IconBarChart,
+  IconCheckCircle,
   IconEye,
   IconEyeOff,
   IconLock,
@@ -33,6 +35,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
   const [demoModalOpen, setDemoModalOpen] = useState(false)
@@ -46,14 +49,14 @@ export default function Login() {
       return
     }
     setError('')
+    setInfo('')
     setSubmitting(true)
     try {
-      const user = await login(username.trim(), password)
+      const user = await login(username.trim(), password, rememberMe)
       toast(`Welcome back, ${user.displayName}!`, 'success')
       navigate(from && !from.startsWith('/login') ? from : homeForRole(user.role), { replace: true })
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Authentication failed. Please check credentials.')
-    } finally {
       setSubmitting(false)
     }
   }
@@ -68,7 +71,7 @@ export default function Login() {
 
   const handleForgotPassword = (e: React.MouseEvent) => {
     e.preventDefault()
-    alert('For security reasons, password resets are handled by your Institutional Administrator. Please contact your Department Head or IT Helpdesk.')
+    setInfo('Password resets are handled by your Institutional Administrator. Please contact your Department Head or IT Helpdesk.')
   }
 
   return (
@@ -139,6 +142,9 @@ export default function Login() {
       {/* Right Panel: Clean Login Section */}
       <div className="login-form-side">
         <div className="login-card-container">
+          <Link to="/" className="login-back-link">
+            ← Back to home
+          </Link>
           <div className="login-card-head">
             <h2>Welcome back</h2>
             <p className="sub">Sign in to your college portal</p>
@@ -207,8 +213,17 @@ export default function Login() {
 
             {/* Error Message */}
             {error && (
-              <div className="login-error-banner">
-                {error}
+              <div className="login-error-banner" role="alert">
+                <IconAlertTriangle />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Info Message (e.g. forgot password guidance) */}
+            {info && (
+              <div className="login-info-banner" role="status">
+                <IconCheckCircle />
+                <span>{info}</span>
               </div>
             )}
 
@@ -220,7 +235,7 @@ export default function Login() {
               loading={submitting}
               style={{ width: '100%', marginTop: 8, padding: '12px 20px', fontSize: 15 }}
             >
-              Sign In to Portal →
+              {submitting ? 'Signing you in…' : 'Sign In to Portal'}
             </Button>
 
             {/* Security Footnote */}
