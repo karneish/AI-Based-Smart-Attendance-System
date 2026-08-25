@@ -37,3 +37,13 @@ A role-based academic platform combining period/hour-wise QR attendance, fixed t
 | Student | `mohan23` | `Student@123` |
 
 See `smart_academic_companion_implementation_plan.md` for the full product plan.
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Author
+
+**Karneish P** - [GitHub](https://github.com/karneish)
